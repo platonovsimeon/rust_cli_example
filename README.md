@@ -7,4 +7,4 @@ Only uncompressed RGB .tga image files are supported.
 # How to run the code
 cargo run [input_file] [output_folder]
 
-Use absolute paths for both arguments.
+Use absolute path for both arguments.
