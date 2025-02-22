@@ -1,13 +1,17 @@
 use std::env;
 use std::fs;
 use std::thread;
+use std::thread::JoinHandle;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     let file_name = &args[1];
     let output_folder = &args[2];
-    process_image_on_new_thread(file_name.clone(), output_folder.clone(), TintType::RED);
-    process_image_on_new_thread(file_name.clone(), output_folder.clone(), TintType::BLUE);
+    let handle1 = process_image_on_new_thread(file_name.clone(), output_folder.clone(), TintType::RED);
+    let handle2 = process_image_on_new_thread(file_name.clone(), output_folder.clone(), TintType::BLUE);
+
+    handle1.join();
+    handle2.join();
 }
 
 #[derive(Copy, Clone)]
@@ -32,8 +36,8 @@ impl TintType {
     }
 }
 
-fn process_image_on_new_thread(file_name: String, output_folder: String, tint_type: TintType) {
-    thread::spawn(move || {
+fn process_image_on_new_thread(file_name: String, output_folder: String, tint_type: TintType) -> JoinHandle<()> {
+    return thread::spawn(move || {
         let input_bytes = fs::read(file_name).expect("Reading from file failed");
         let data_type = input_bytes.get(2).unwrap();
     
