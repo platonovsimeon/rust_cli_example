@@ -51,8 +51,7 @@ fn process_image_on_new_thread(file_name: String, output_folder: String, tint_ty
         let color_map_length_bytes = [*color_map_length_byte_1, *color_map_length_byte_2];
         let color_map_length = u16::from_ne_bytes(color_map_length_bytes);
     
-        let pixels_start_at = 
-        18 + usize::from(*image_id_length) + usize::from(color_map_length);
+        let pixels_start_at = 18 + usize::from(*image_id_length) + usize::from(color_map_length);
     
         let mut output_bytes: Vec<u8> = Vec::new();
         let mut current_color = 0;
