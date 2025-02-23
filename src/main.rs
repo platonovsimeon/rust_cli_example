@@ -21,7 +21,7 @@ enum TintType {
 }
 
 impl TintType {
-    fn color_byte_order_number(self) -> i32 {
+    fn color_byte_order_number(self) -> usize {
         match self {
             TintType::RED => 1,
             TintType::BLUE => 2
@@ -53,28 +53,22 @@ fn process_image_on_new_thread(file_name: String, output_folder: String, tint_ty
     
         let pixels_start_at = 18 + usize::from(*image_id_length) + usize::from(color_map_length);
     
-        let mut output_bytes: Vec<u8> = Vec::new();
-        let mut current_color = 0;
+        let mut output_bytes: Vec<u8> = Vec::with_capacity(input_bytes.len());
         for (i, byte) in input_bytes.iter().enumerate() {
             if i < pixels_start_at {
                 output_bytes.push(*byte);
                 continue;
             }
     
-            if current_color == 3 {
-                current_color = 0;
-            }
-            
-            if current_color == tint_type.color_byte_order_number() {
+            let color_channel = (i - pixels_start_at) % 3;
+            if color_channel == tint_type.color_byte_order_number() {
                 output_bytes.push(0);
             } else {
                 output_bytes.push(*byte);
             }
-    
-            current_color = current_color + 1;
         }
     
-        let output_file_path = output_folder.to_owned() + &tint_type.name() + ".tga";
+        let output_file_path = format!("{}{}.tga", output_folder, tint_type.name());
         fs::write(&output_file_path, output_bytes).expect("Writing file failed");
     });
 }
